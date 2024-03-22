@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Scherbatiuk</title>
+</head>
+<body>
+    <p style="white-space: pre; font-size: 18px; line-height: 1.33; padding-left: 30px; background-color: #DCDCDC;">
+        Домашнее задание №9
+        Курс:«Язык сценариев JavaScript и библиотека jQuery»»
+        Студент: Щербатюк О.М.
+        ТЕМА: Проверка достоверности форм.
+        Использование Cookie
+        Задание
+        Реализовать страницу с палитрой цветов и формой для добавления нового цвета.
+        Один цвет характеризуется:
+        ■ уникальным названием;
+        ■ типом (RGB, RGBA или HEX);
+        ■ кодом цвета.
+        При нажатии на кнопку Save, необходимо проверять введенные
+        данные по следующим правилам.
+        Название:
+        ■ обязательное поле;
+        ■ нерегистрозависимое уникальное значение (то есть в списке уже существующих цветов не должно быть такого же
+        названия);
+        ■ только буквенные символы.
+        Тип:
+        ■ выпадающий список из 3-х вариантов: RGB, RGBA, HEX.
+        Код цвета:
+        ■ RGB – 3 числа через запятую, каждое число в диапазоне
+        от 0 до 255;
+        ■ RGBA – 4 числа через запятую, первые 3 числа в диапазоне
+        от 0 до 255, последнее число от 0 до 1;
+        ■ HEX – символ # и 6 цифр или букв от A до F.
+        Если пользователь при заполнении формы ввел некорректные
+        данные, то необходимо отобразить соответствующие ошибки.
+        Необходимо сохранять коллекцию цветов в куки, чтобы при
+        обновлении страницы не потерять данные. Максимальный срок
+        жизни куки – 3 часа.
+        Начальное состояние страницы:
+<img src="1.png" alt="Начальное состояние страницы" width="500" height="250">
+        Ввод данных о новом цвете:
+<img src="2.png" alt="Ввод данных о новом цвете" width="500" height="250">
+        Ввод данных с ошибками:
+<img src="3.png" alt="Ввод данных с ошибками" width="500" height="250">
+        Состояние страницы после добавление нового цвета:
+<img src="4.png" alt="Состояние страницы после добавление нового цвета" width="500" height="250">
+    </p>
+    <p id="out"></p>
+    <div class="conteiner">
+        <form action="" method="GET" onsubmit="checkForm(event)">
+                <p class="head">Create new color</p><br>
+                <span class="names">Color: </span><span class="wrongname"></span><br>
+                <input class="input_name" type="text" name="color" placeholder="Enter a name of a color..." required><br>
+                <span class="names">Type: </span><br>
+                <select name="type" class="selected">
+                        <option value="RGB" >RGB</option>
+                        <option value="RGBA" >RGBA</option>
+                        <option value="HEX" >HEX</option>
+                      </select><br>
+                <span class="names">Code: </span><span class="wrongcode"></span><br>
+                <input class="input_code" type="text" name="code" required><br>
+                <input class="input_save" type="submit" name="color" value="save">
+        </form>
+        <div class="box"></div>
+
+    </div>
+    <script>
+console.log(document.cookie);
+let conteiner = document.querySelector(".conteiner");
+let temlate_name = new RegExp ();
+temlate_name = /[^\s]$/;
+let temlate_RGB = new RegExp ();
+temlate_RGB =/(\s*\d+\s*,){2}\s*[\d]+/;
+let temlate_RGBA = new RegExp ();
+temlate_RGBA=/(\s*\d+\s*,){3}[\d\.]+/;
+let temlate_HEX = new RegExp ();
+temlate_HEX= /[a-zA-Z0-9]{6}/;
+conteiner.addEventListener("click", function(){
+       /* console.log(temlate_RGB.test('1'))//rgb\((?:\s*\d+\s*,){2}\s*[\d]+\)
+        console.log(/rgb\((?:\s*\d+\s*,){2}\s*[\d]+\)/.test('rgb(0,255,80)'))*/
+        var type_color = document.querySelector(".selected").value;
+        var input_code = document.querySelector(".input_code");
+        if(type_color==="RGB"){
+                input_code.placeholder = "0-255,0-255,0-255";   
+        }else if(type_color==="RGBA"){
+                input_code.placeholder = "0-255,0-255,0-255,0.0";
+        }else if(type_color==="HEX"){
+                input_code.placeholder = "00ff00";
+        }
+})
+function checkForm(){
+        let input_code_value = document.querySelector(".input_code").value;
+        type_color = document.querySelector(".selected").value;
+        var name = document.querySelector(".input_name").value;
+        let wrongcode = document.querySelector(".wrongcode");
+        if(!temlate_name.test(name)){
+                document.querySelector(".wrongname").innerHTML = "You shoud enter just letters and numbers.";
+                return false;
+        };
+        if(type_color==="RGB"){
+                if(! temlate_RGB.test(input_code_value)){
+                        wrongcode.innerHTML = "You shoud enter this way '0-255,0-255,0-255'.";
+                        return false;
+                }  
+        }else if(type_color==="RGBA"){
+                if(! temlate_RGBA.test(input_code_value)){
+                        wrongcode.innerHTML = "You shoud enter this way '0-255,0-255,0-255,0.0'.";
+                        return false;
+                } 
+        }else if(type_color==="HEX"){
+                if(! temlate_HEX.test(input_code_value)){
+                        wrongcode.innerHTML = "You shoud enter similar this way '00ff00'.";
+                        return false;
+                } 
+        }else {
+                return true;
+        }
+        let spanNameColor = document.createElement('SPAN');
+        let spanTypeColor = document.createElement('SPAN');
+        let spanCode = document.createElement('SPAN');
+        let divColor = document.createElement('DIV');
+        spanNameColor.textContent = name;
+        spanTypeColor.textContent = type_color;
+        spanCode.textContent = input_code_value;
+        divColor.appendChild(spanNameColor);
+        divColor.appendChild(spanTypeColor);
+        divColor.appendChild(spanCode);
+        divColor.className = 'divColor';
+        document.querySelector(".box").appendChild(divColor);
+        switch (type_color){
+                case 'RGB':
+                divColor.style.backgroundColor = 'rgb('+input_code_value+')';
+                break;
+                case 'RGBA':
+                divColor.style.backgroundColor = 'rgba('+input_code_value+')';
+                break;
+                case 'HEX':
+                divColor.style.backgroundColor = '#'+input_code_value;
+                break;
+        }
+        //let cookie_document = 'color='+name+';type='+type_color+';code='+input_code_value;
+        //document.cookie = name+';'+type_color+';'+input_code_value;
+		
+		document.cookie = "code=5,5,5"
+        document.cookie = 'color='+name;
+		document.cookie = 'type='+type_color;
+		document.cookie = 'code='+input_code_value;
+		document.cookie = "code=5,5,5"
+		
+        console.log('cookies:', document.cookie);
+        console.log('Blash Ukrain');
+}
+console.log(document.cookie );
+out.innerText = document.cookie;
+    </script>
+</body>
+</html>
